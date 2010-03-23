@@ -6,6 +6,7 @@
 package com.xload.searchmaster.model;
 
 import com.xload.generic.WeightedItem;
+import com.xload.generic.connectivity.MyHttpClient;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,12 +55,12 @@ public class Master {
    * @author madrax
    */
   private static String textify(String url, boolean dive) {
-    HttpClient httpclient = new DefaultHttpClient();
-    CookieStore cookieStore = (CookieStore) new BasicCookieStore();
-    HttpContext localContext = new BasicHttpContext();
-    localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+    DefaultHttpClient httpclient = MyHttpClient.getClient();
     HttpGet httpget = new HttpGet(url);
     HttpResponse response = null;
+    HttpContext localContext = new BasicHttpContext();
+    CookieStore cookieStore = (CookieStore) new BasicCookieStore();
+    localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
     try {
       response = httpclient.execute(httpget, localContext);
     } catch (IOException ex) {

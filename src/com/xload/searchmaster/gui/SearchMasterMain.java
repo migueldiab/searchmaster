@@ -13,8 +13,6 @@ package com.xload.searchmaster.gui;
 
 import com.xload.searchmaster.Facade;
 import com.xload.generic.WeightedItem;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import javax.swing.DefaultListModel;

@@ -6,17 +6,23 @@
 package com.xload.searchmaster.model;
 
 import com.xload.generic.WeightedItem;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
+import com.xload.generic.connectivity.MyHttpClient;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URLEncoder;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.json.JSONArray;      // JSON library from http://www.json.org/java/
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,27 +58,39 @@ public class GoogleAPI {
    */
   public static String SearchGoogleAPIByKeyword(String keyword) {
     System.out.println("Start SearchGoogleAPIByKeyword : "+System.currentTimeMillis());
-    StringBuilder builder = new StringBuilder();
+    String stringResponse = null;
     try {
       // Convert spaces to +, etc. to make a valid URL
       keyword = URLEncoder.encode(keyword, "UTF-8");
-      URL url = new URL("http://ajax.googleapis.com/ajax/services/search/web?start=0&rsz=large&v=1.0&q=" + keyword);
-      URLConnection connection = url.openConnection();
-      connection.addRequestProperty("Referer", HTTP_REFERER);
-      // Get the JSON response
-      String line;
-      InputStreamReader inputStream = new InputStreamReader(connection.getInputStream());
-      BufferedReader reader = new BufferedReader(inputStream);
-      while((line = reader.readLine()) != null) {
-        builder.append(line);
+
+      String url = "http://ajax.googleapis.com/ajax/services/search/web?start=0&rsz=large&v=1.0&q=" + keyword;
+      DefaultHttpClient httpclient = MyHttpClient.getClient();
+      CookieStore cookieStore = (CookieStore) new BasicCookieStore();
+      HttpContext localContext = new BasicHttpContext();
+      localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+      HttpGet httpget = new HttpGet(url);
+      HttpResponse response = null;
+      try {
+        response = httpclient.execute(httpget, localContext);
+      } catch (IOException ex) {
+        System.out.println("GoogleAPI.SearchGoogleAPIByKeyword error : "+ex.toString());
       }
-      String response = builder.toString();
-      System.out.println("Search for '"+keyword+"' returned : "+response);
+      HttpEntity entity = response.getEntity();
+      ByteArrayOutputStream sourceHtml = new ByteArrayOutputStream();
+      try {
+        entity.writeTo(sourceHtml);
+      } catch (IOException ex) {
+        System.out.println("Master.textify error : "+ex.toString());
+      }
+      stringResponse=sourceHtml.toString();
+
+      // Get the JSON response
+      System.out.println("Search for '"+keyword+"' returned : "+stringResponse);
     } catch (Exception e) {
       System.out.println(e.toString());
     }
     System.out.println("End SearchGoogleAPIByKeyword : "+System.currentTimeMillis());
-    return builder.toString();
+    return stringResponse;
   }
 
   /*

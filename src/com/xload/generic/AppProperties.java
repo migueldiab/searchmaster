@@ -14,10 +14,11 @@ import java.util.Properties;
  * @author SG0894180
  */
 public class AppProperties {
-  public static String PROXY_URL = "proxy_url";
-  public static String PROXY_PORT = "proxy_port";
-  public static String PROXY_USER = "proxy_user";
-  public static String PROXY_PASSWORD = "proxy_pass";
+  public static final String PROXY_ENABLED = "proxy_enabled";
+  public static final String PROXY_URL = "proxy_url";
+  public static final String PROXY_PORT = "proxy_port";
+  public static final String PROXY_USER = "proxy_user";
+  public static final String PROXY_PASSWORD = "proxy_pass";
 
   public static String getProperty(String property_name) {
 

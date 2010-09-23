@@ -63,7 +63,7 @@ public class GoogleAPI {
       // Convert spaces to +, etc. to make a valid URL
       keyword = URLEncoder.encode(keyword, "UTF-8");
 
-      String url = "http://ajax.googleapis.com/ajax/services/search/web?start=0&rsz=large&v=1.0&q=" + keyword;
+      String url = "http://ajax.googleapis.com/ajax/services/search/web?start=0&rsz=large&v=1.0&lr=lang_pt&cr=countryBR&q=" + keyword;
       DefaultHttpClient httpclient = MyHttpClient.getClient();
       CookieStore cookieStore = (CookieStore) new BasicCookieStore();
       HttpContext localContext = new BasicHttpContext();
